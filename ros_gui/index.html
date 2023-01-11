@@ -8,11 +8,11 @@
 
   <body>
     <h1 class="title-header">Simple ROS User Interface</h1>
-    <p><button onclick="inputIP()">Connect</button> Connection status: <span id="status"></span> </p>
+    <p><button onclick="inputIP()">Connect</button> <button onclick="disconnectROS()">Disconnect</button> Connection status: <span id="status"></span> </p>
     <!-- usb camera stream -->
     <div id="camera_stream">
       <!-- img src="http://10.150.15.66:8080/stream?topic=/usb_cam/image_raw" width="640" height="480" id="ros_cam"/ --> 
-      <img id="ros_cam" height="480" width="640"/>
+      <img id="ros_cam" height="480" width="640" src="./media/video-placeholder.jpg"/>
       <!-- joystick section -->
         <div id="static"></div>
     </div>
@@ -24,7 +24,9 @@
 
   <script type="text/javascript" type="text/javascript">
     var ipaddr = null;
-    function validateIP(input){
+    var ros = null;
+    function validateIP(input)
+    {
       var ipformat = /^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/;
       if(input.match(ipformat)){
         return true;
@@ -33,15 +35,18 @@
         return false;
       }
     }
-    function inputIP() {
+    function inputIP() 
+    {
       let text;
       ipaddr = prompt("Please enter robot's IP:", "");
       if (ipaddr == null || ipaddr == "") {
         text = "No IP entered.";
         alert(text);
+        ipaddr =null;
       }
       else if(validateIP(ipaddr)!=true){
         text = "Invalid IP.";
+        ipaddr=null;
         alert(text);
       }
       else {
@@ -52,10 +57,26 @@
       //alert(text);
     }
 
+    //disconnect button
+    function disconnectROS()
+    {
+      if(ros != null)
+      {
+        ros.close();
+        ipaddr=null;
+        document.getElementById('ros_cam').src= "./media/video-placeholder.jpg";
+      }
+      else
+      {
+        alert("Error. Either not connected or detected any device.");
+      }
+    }
 
-    function createROS(){
+
+    function createROS()
+    {
       // create ros object
-      var ros = new ROSLIB.Ros({
+      ros = new ROSLIB.Ros({
         url : "ws://" + ipaddr + ":9090"
       });
 
@@ -94,14 +115,17 @@
 
     }
 
-    move = function (linear, angular) {
+    move = function (linear, angular) 
+    {
       var twist = new ROSLIB.Message({
-        linear: {
+        linear: 
+        {
           x: linear,
           y: 0,
           z: 0
         },
-        angular: {
+        angular: 
+        {
           x: 0,
           y: 0,
           z: angular
@@ -111,8 +135,10 @@
     }
 
     //create nipplejs object
-    createJoystick = function(){
-      var options = {
+    createJoystick = function()
+    {
+      var options = 
+      {
         zone: document.getElementById('static'),
         mode: 'static',
         position: {left: '50%', top: '50%',},
@@ -124,14 +150,16 @@
       linear_speed = 0;
       angular_speed = 0;
 
-      self.manager.on('start', function (event, nipple) {
+      self.manager.on('start', function (event, nipple) 
+      {
         console.log("Movement start");
         timer = setInterval(function () {
           move(linear_speed, angular_speed);
         }, 25);
       });
 
-      self.manager.on('move', function (event, nipple) {
+      self.manager.on('move', function (event, nipple) 
+      {
         console.log("Moving");
         max_linear = 5.0; // m/s
         max_angular = 2.0; // rad/s
@@ -140,15 +168,18 @@
         angular_speed = -Math.cos(nipple.angle.radian) * max_angular * nipple.distance/max_distance;
       });
 
-      self.manager.on('end', function () {
+      self.manager.on('end', function () 
+      {
         console.log("Movement end");
-        if (timer) {
+        if (timer) 
+        {
           clearInterval(timer);
         }
         self.move(0, 0);
         });
     }
-    window.onload = function () {
+    window.onload = function () 
+    {
         createJoystick();
     }
 

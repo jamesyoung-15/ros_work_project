@@ -7,5 +7,7 @@ docker run -it \
 	--volume="/dev/bus/usb:/dev/bus/usb" \
 	--device /dev/video0 \
 	--volume="$HOME/Documents/programming/projects/ros/ros_ws:/home/ros_ws" \
+	--volume="$HOME/Downloads/autonomous_exploration_development_environment:/home/autonomous_exploration_development_environment" \
+	--volume="$HOME/Downloads/tare_planner:/home/tare_planner" \
 	--net=host \
 	ros-noetic-build

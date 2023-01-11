@@ -8,16 +8,26 @@
 
   <body>
     <h1 class="title-header">Simple ROS User Interface</h1>
-    <p><button onclick="inputIP()">Connect</button> <button onclick="disconnectROS()">Disconnect</button> Connection status: <span id="status"></span> </p>
-    <!-- usb camera stream -->
+    <div class="connect-area">
+      <p><button onclick="inputIP()">Connect</button> <button onclick="disconnectROS()">Disconnect</button> </p>
+    </div>
+    <div class="connect-status">
+      <p>Connection status: <span id="status"></span></p>
+    </div>
+      <!-- usb camera stream -->
     <div id="camera_stream">
+      <h3>Camera Stream:</h3>
       <!-- img src="http://10.150.15.66:8080/stream?topic=/usb_cam/image_raw" width="640" height="480" id="ros_cam"/ --> 
       <img id="ros_cam" height="480" width="640" src="./media/video-placeholder.jpg"/>
-      <!-- joystick section -->
-        <div id="static"></div>
+    </div>
+    <!-- joystick section -->
+    <div class="controller_area">
+      <h3>Controller</h3>
+     <div id="static"></div>
     </div>
   </body>
 
+  <!-- script section -->
   <script type="text/javascript" src="http://static.robotwebtools.org/roslibjs/current/roslib.min.js"></script>
   <script src="./js/node_modules/nipplejs/dist/nipplejs.js"></script>
   <script type="text/javascript" src="http://static.robotwebtools.org/EventEmitter2/current/eventemitter2.min.js"></script>
@@ -52,6 +62,7 @@
       else {
         text = "Entered IP: " + ipaddr + ".";
         createROS();
+        createJoystick();
       }
       // document.getElementById("printip").innerHTML = text;
       //alert(text);
@@ -141,18 +152,17 @@
       {
         zone: document.getElementById('static'),
         mode: 'static',
-        position: {left: '50%', top: '50%',},
         size: 150,
+        position: {left:"60%"},
         color: 'red'
       }
       manager = nipplejs.create(options);
 
       linear_speed = 0;
       angular_speed = 0;
-
       self.manager.on('start', function (event, nipple) 
       {
-        console.log("Movement start");
+        //console.log("Movement start");
         timer = setInterval(function () {
           move(linear_speed, angular_speed);
         }, 25);
@@ -160,9 +170,9 @@
 
       self.manager.on('move', function (event, nipple) 
       {
-        console.log("Moving");
-        max_linear = 5.0; // m/s
-        max_angular = 2.0; // rad/s
+        //console.log("Moving");
+        max_linear = 1.0; // m/s
+        max_angular = 1.0; // rad/s
         max_distance = 75.0; // pixels;
         linear_speed = Math.sin(nipple.angle.radian) * max_linear * nipple.distance/max_distance;
         angular_speed = -Math.cos(nipple.angle.radian) * max_angular * nipple.distance/max_distance;
@@ -170,18 +180,15 @@
 
       self.manager.on('end', function () 
       {
-        console.log("Movement end");
+        //console.log("Movement end");
         if (timer) 
         {
           clearInterval(timer);
         }
         self.move(0, 0);
         });
-    }
-    window.onload = function () 
-    {
-        createJoystick();
-    }
+      }
+
 
 
   </script>

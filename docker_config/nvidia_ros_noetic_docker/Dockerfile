@@ -14,3 +14,6 @@ RUN apt-get install -y ros-noetic-web-video-server
 RUN apt-get install -y libusb-dev
 RUN apt-get install -y python3-tk
 RUN apt-get install -y git
+RUN apt-get install -y ros-noetic-rosbridge-server
+RUN echo "source /opt/ros/noetic/setup.bash" >> ~/.bashrc
+

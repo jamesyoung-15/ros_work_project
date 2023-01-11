@@ -1,3 +1,25 @@
 .title-header{
     text-align: center;
 }
+.connect-area{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.connect-status{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#camera_stream{
+    display: grid;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+}
+.controller_area{
+    text-align: center;
+    width: 80%;
+    margin:auto;
+}

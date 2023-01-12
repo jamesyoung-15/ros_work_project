@@ -22,4 +22,12 @@
     text-align: center;
     width: 80%;
     margin:auto;
+    height: 180px;
+}
+.joystick_container{
+    position: static;
+    display: flex;
+    justify-content: center;
+    height: 100px;
+    margin-top: 5%;
 }

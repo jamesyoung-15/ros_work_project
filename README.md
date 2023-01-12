@@ -1,5 +1,5 @@
 # ROS Project for Internship
-ROS project I had to make for internship. Using Ros-Noetic with Docker, have docker container for both Nvidia and integrated GPU.
+ROS project I am working on for internship. Using Ros-Noetic with Docker, have docker container for both Nvidia and integrated GPU.
 
 ## Running Docker for ROS
 Build docker image with `docker build -t tagname .` and then run bash script. For example for Nvidia Ros container run: 

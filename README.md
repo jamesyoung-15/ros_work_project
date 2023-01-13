@@ -18,5 +18,7 @@ Docker containers have GUI support using first method from wiki: http://wiki.ros
 - Able to stream camera both from HTTP stream and ROS camera publisher
 
 ## Todo:
-- Display point cloud messages
+- Learn front stack (HTML, CSS, Javascript and other JS frameworks)
 - Create nice UI (dashboard like)
+- Display point cloud messages and maybe other relevant data like sensor data or whatever they ask
+- Create a way to list ROS topics and then drag and drop to view them on the dashboard (?might not be necessary)

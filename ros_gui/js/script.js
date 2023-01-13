@@ -6,93 +6,113 @@ var joystickCreated = "none";
 //check if input IP is an valid IP address
 function validateIP(input)
 {
-  var ipformat = /^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/;
-  if(input.match(ipformat)){
+    var ipformat = /^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/;
+    if(input.match(ipformat)){
     return true;
-  }
-  else{
+    }
+    else{
     return false;
-  }
+    }
 }
 
 //Check and store IP
 function inputIP() 
 {
-  let text;
-  ipaddr = prompt("Please enter robot's IP:", "");
-  if (ipaddr == null || ipaddr == "") {
+    let text;
+    ipaddr = prompt("Please enter robot's IP:", "");
+    if (ipaddr == null || ipaddr == "") {
     text = "No IP entered.";
     alert(text);
     ipaddr =null;
-  }
-  else if(validateIP(ipaddr)!=true){
+    }
+    else if(validateIP(ipaddr)!=true){
     text = "Invalid IP.";
     ipaddr=null;
     alert(text);
-  }
-  else {
+    }
+    else {
     text = "Entered IP: " + ipaddr + ".";
     createROS();
-  }
-  // document.getElementById("printip").innerHTML = text;
-  //alert(text);
-}
+    }
+    // document.getElementById("printip").innerHTML = text;
+    //alert(text);
+    }
 
-//disconnect ROS bridge function
-function disconnectROS()
-{
-  if(ros != null)
-  {
+    //disconnect ROS bridge function
+    function disconnectROS()
+    {
+    if(ros != null)
+    {
     ros.close();
     ipaddr=null;
     document.getElementById("controller_header").innerHTML = "";
     joystickControl("off");
-    document.getElementById('toggleButtonOn').style.visibility = 'hidden';
-    document.getElementById('toggleButtonOff').style.visibility = 'hidden';
+    document.getElementById('controller_area').style.visibility = 'hidden';
     document.getElementById("camera_source").style.visibility = "hidden";
     document.getElementById("camera_stream").style.visibility = "hidden";
-  }
-  else
-  {
+    }
+    else
+    {
     alert("Error. Either not connected or detected any device.");
-  }
+    }
 }
 
 //create ROS bridge function
 function createROS()
 {
-  // create ros object
-  ros = new ROSLIB.Ros({
-    url : "ws://" + ipaddr + ":9090"
-  });
+    // create ros object
+    ros = new ROSLIB.Ros({
+        url : "ws://" + ipaddr + ":9090"
+    });
 
-  //test ros connection section
-  ros.on('connection', function() {
-    document.getElementById("status").innerHTML = "Connected at " + ipaddr;
-    document.getElementById("controller_header").innerHTML = "Controller";
-    document.getElementById("camera_source").style.visibility = "visible";
-    document.getElementById("camera_stream").style.visibility = "visible";
-    joystickControl("on");
-    document.getElementById("controller_area").style.visibility="visible";
-  });
+    //test ros connection section
+    ros.on('connection', function() {
+        document.getElementById("status").innerHTML = "Connected at " + ipaddr;
+        document.getElementById("controller_header").innerHTML = "Controller";
+        document.getElementById("camera_source").style.visibility = "visible";
+        document.getElementById("camera_stream").style.visibility = "visible";
+        joystickControl("on");
+        document.getElementById("controller_area").style.visibility="visible";
+    });
 
-  ros.on('error', function(error) {
-    document.getElementById("status").innerHTML = "Error";
-    ipaddr = null;
-  });
+    ros.on('error', function(error) {
+        document.getElementById("status").innerHTML = "Error";
+        ipaddr = null;
+    });
 
-  ros.on('close', function() {
-    document.getElementById("status").innerHTML = "Closed";
-  });
+    ros.on('close', function() {
+        document.getElementById("status").innerHTML = "Closed";
+    });
 
-  //create robot velocity topic
-  cmd_vel_listener = new ROSLIB.Topic({
-    ros : ros,
-    name : "/cmd_vel",
-    messageType : 'geometry_msgs/Twist'
-  });
+    //create robot velocity topic
+    cmd_vel_listener = new ROSLIB.Topic({
+        ros : ros,
+        name : "/cmd_vel",
+        messageType : 'geometry_msgs/Twist'
+    });
 
-  rosCamera();
+    rosCamera();
+}
+
+//list ros topics
+function listRosTopics()
+{
+    var topicTypeClient = new ROSLIB.Service({
+        ros : ros,
+        name : '/rosapi/topics',
+        serviceType : 'rosapi/Topics',
+    });
+    var request = new ROSLIB.ServiceRequest();
+    topicTypeClient.callService(request, function(result) {
+        console.log('Topics: ', result.topics); //topic names
+        console.log('Topic Types: ', result.types); //topic types 
+        result.types.forEach((item,index)=>{
+            if(result.types[index]=="sensor_msgs/CompressedImage")
+            {
+                console.log(item, index, result.topics[index]);
+            }
+        });
+    });
 }
 
 //ros camera topic

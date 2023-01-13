@@ -34,7 +34,7 @@
     width: 80%;
     margin:auto;
     height: 180px;
-    margin-bottom: 10%;
+    margin-bottom: 20px;
     visibility: hidden;
 }
 #joystick_container{
@@ -43,4 +43,12 @@
     justify-content: center;
     height: 100px;
     margin-top: 5%;
+}
+#listTopics{
+    visibility: visible;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 10px;
+    margin-top: 100px;
 }

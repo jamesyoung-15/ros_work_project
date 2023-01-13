@@ -14,7 +14,7 @@
       <button onclick="disconnectROS()">Disconnect</button>
     </div>
     <div id="connect-status">
-      <p>Connection status: <span id="status"></span></p>
+      <p>Connection status: <span id="status">Not Connected</span></p>
     </div>
       <!-- usb camera stream -->
     <div id="camera_stream">
@@ -36,9 +36,12 @@
         <div id="static"></div>
         <!-- <div id="semi"></div> -->
       </div>
-      <button id="toggleButtonOn" onclick="joystickControl('on')">Turn On Joystick</button>
-      <button id="toggleButtonOff" onclick="joystickControl('off')">Turn Off Joystick</button>
+      <!-- <button id="toggleButtonOn" onclick="joystickControl('on')">Turn On Joystick</button> -->
+      <!-- <button id="toggleButtonOff" onclick="joystickControl('off')">Turn Off Joystick</button> -->
       <button id="calibrateButton" onclick="joystickRecalibrate()">Re-Calibrate Controller</button>
+    </div>
+    <div id="listTopics">
+      <button onclick="listRosTopics()">Refresh Topics</button>
     </div>
   </body>
 
@@ -47,6 +50,7 @@
   <script src="./js/nipplejs.js"></script>
   <script type="text/javascript" src="http://static.robotwebtools.org/EventEmitter2/current/eventemitter2.min.js"></script>
   <script src="./js/script.js"></script>
+  <script src="./js/test.js"></script>
 
 
 </html>

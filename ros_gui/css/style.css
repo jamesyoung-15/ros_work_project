@@ -1,12 +1,14 @@
 .title-header{
     text-align: center;
 }
-.connect-area{
+#connect-area{
     display: flex;
     align-items: center;
     justify-content: center;
+    gap: 5px;
+    margin: 1%;
 }
-.connect-status{
+#connect-status{
     display: flex;
     align-items: center;
     justify-content: center;
@@ -17,14 +19,25 @@
     justify-content: center;
     align-items: center;
     text-align: center;
+    visibility: hidden;
 }
-.controller_area{
+#camera_source{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    margin: 1%;
+    visibility: hidden;
+}
+#controller_area{
     text-align: center;
     width: 80%;
     margin:auto;
     height: 180px;
+    margin-bottom: 10%;
+    visibility: hidden;
 }
-.joystick_container{
+#joystick_container{
     position: static;
     display: flex;
     justify-content: center;

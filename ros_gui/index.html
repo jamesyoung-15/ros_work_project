@@ -4,29 +4,41 @@
     <link href="css/style.css" rel="stylesheet" />
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0"> 
+    <title>Robot Interface</title>
   </head>
 
   <body>
     <h1 class="title-header">Simple ROS User Interface</h1>
-    <div class="connect-area">
-      <p><button onclick="inputIP()">Connect</button> <button onclick="disconnectROS()">Disconnect</button> </p>
+    <div id="connect-area">
+      <button onclick="inputIP()">Connect</button> 
+      <button onclick="disconnectROS()">Disconnect</button>
     </div>
-    <div class="connect-status">
+    <div id="connect-status">
       <p>Connection status: <span id="status"></span></p>
     </div>
       <!-- usb camera stream -->
     <div id="camera_stream">
       <h3>Camera Stream</h3>
       <!-- img src="http://10.150.15.66:8080/stream?topic=/usb_cam/image_raw" width="640" height="480" id="ros_cam"/ --> 
-      <img id="ros_cam" height="480" width="640" src="./media/video-placeholder.jpg"/>
+      <!-- <img id="ros_cam" height="480" width="640" src="./media/video-placeholder.jpg"/> -->
+    </div>
+    <div id="camera_source">
+      <select id="cameraSource">
+        <option value="1">Robot Camera</option>
+        <option value="2">HTTP Stream</option>
+      </select>
+      <button onclick="rosCamera()">Apply Camera Source</button>
     </div>
     <!-- joystick section -->
-    <div class="controller_area">
+    <div id="controller_area">
       <h3 id="controller_header"></h3>
-      <div class="joystick_container">
+      <div id="joystick_container">
         <div id="static"></div>
         <!-- <div id="semi"></div> -->
       </div>
+      <button id="toggleButtonOn" onclick="joystickControl('on')">Turn On Joystick</button>
+      <button id="toggleButtonOff" onclick="joystickControl('off')">Turn Off Joystick</button>
+      <button id="calibrateButton" onclick="joystickRecalibrate()">Re-Calibrate Controller</button>
     </div>
   </body>
 
@@ -34,168 +46,7 @@
   <script type="text/javascript" src="http://static.robotwebtools.org/roslibjs/current/roslib.min.js"></script>
   <script src="./js/nipplejs.js"></script>
   <script type="text/javascript" src="http://static.robotwebtools.org/EventEmitter2/current/eventemitter2.min.js"></script>
-
-  <script type="text/javascript" type="text/javascript">
-    var ipaddr = null;
-    var ros = null;
-    function validateIP(input)
-    {
-      var ipformat = /^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/;
-      if(input.match(ipformat)){
-        return true;
-      }
-      else{
-        return false;
-      }
-    }
-    function inputIP() 
-    {
-      let text;
-      ipaddr = prompt("Please enter robot's IP:", "");
-      if (ipaddr == null || ipaddr == "") {
-        text = "No IP entered.";
-        alert(text);
-        ipaddr =null;
-      }
-      else if(validateIP(ipaddr)!=true){
-        text = "Invalid IP.";
-        ipaddr=null;
-        alert(text);
-      }
-      else {
-        text = "Entered IP: " + ipaddr + ".";
-        createROS();
-      }
-      // document.getElementById("printip").innerHTML = text;
-      //alert(text);
-    }
-
-    //disconnect button
-    function disconnectROS()
-    {
-      if(ros != null)
-      {
-        ros.close();
-        ipaddr=null;
-        document.getElementById('ros_cam').src= "./media/video-placeholder.jpg";
-      }
-      else
-      {
-        alert("Error. Either not connected or detected any device.");
-      }
-    }
-
-
-    function createROS()
-    {
-      // create ros object
-      ros = new ROSLIB.Ros({
-        url : "ws://" + ipaddr + ":9090"
-      });
-
-      //test ros connection section
-      ros.on('connection', function() {
-        document.getElementById("status").innerHTML = "Connected at " + ipaddr;
-        document.getElementById("controller_header").innerHTML = "Controller";
-        createJoystick();
-      });
-
-      ros.on('error', function(error) {
-        document.getElementById("status").innerHTML = "Error";
-      });
-
-      ros.on('close', function() {
-        document.getElementById("status").innerHTML = "Closed";
-      });
-
-      //ros subscribe to usb camera
-      // var imageListener = new ROSLIB.Topic({
-      //   ros : ros,
-      //   name : '/usb_cam/image_raw/compressed',
-      //   messageType : 'sensor_msgs/CompressedImage'
-      // });
-
-      // imageListener.subscribe(function(message) {
-      //   document.getElementById('ros_cam').src = "data:image/jpg;base64," + message.data;
-      //   imageListener.unsubscribe();
-      // });
-
-      document.getElementById('ros_cam').src= "http://"+ ipaddr + ":8080/stream?topic=/usb_cam/image_raw";
-      //create robot velocity topic
-      cmd_vel_listener = new ROSLIB.Topic({
-        ros : ros,
-        name : "/cmd_vel",
-        messageType : 'geometry_msgs/Twist'
-      });
-
-    }
-
-    move = function (linear, angular) 
-    {
-      var twist = new ROSLIB.Message({
-        linear: 
-        {
-          x: linear,
-          y: 0,
-          z: 0
-        },
-        angular: 
-        {
-          x: 0,
-          y: 0,
-          z: angular
-        }
-      });
-      cmd_vel_listener.publish(twist);
-    }
-
-    //create nipplejs object
-    createJoystick = function()
-    {
-      var options = 
-      {
-        zone: document.getElementById('static'),
-        mode: 'static',
-        size: 100,
-        position: {left:"50%"},
-        color: 'red'
-      }
-      manager = nipplejs.create(options);
-
-      linear_speed = 0;
-      angular_speed = 0;
-      self.manager.on('start', function (event, nipple) 
-      {
-        //console.log("Movement start");
-        timer = setInterval(function () {
-          move(linear_speed, angular_speed);
-        }, 25);
-      });
-
-      self.manager.on('move', function (event, nipple) 
-      {
-        //console.log("Moving");
-        max_linear = 1.0; // m/s
-        max_angular = 1.0; // rad/s
-        max_distance = 75.0; // pixels;
-        linear_speed = Math.sin(nipple.angle.radian) * max_linear * nipple.distance/max_distance;
-        angular_speed = -Math.cos(nipple.angle.radian) * max_angular * nipple.distance/max_distance;
-      });
-
-      self.manager.on('end', function () 
-      {
-        //console.log("Movement end");
-        if (timer) 
-        {
-          clearInterval(timer);
-        }
-        self.move(0, 0);
-        });
-      }
-
-
-  </script>
-
+  <script src="./js/script.js"></script>
 
 
 </html>

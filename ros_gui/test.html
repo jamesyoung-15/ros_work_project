@@ -1,20 +1,55 @@
 <!DOCTYPE html>
-  <html lang="en">
-    <head>
-      <link href="css/test.css" rel="stylesheet" />
+<html>
+  <head>
+    <link href="css/test.css" rel="stylesheet" />
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"> 
+    <title>Robot Interface</title>
   </head>
-  <body>
-    <div>
-      <button onclick="listRosTopics()">List Topics</button>
-      <select id="selectTopic">
 
-      </select>
-      <button onclick="addTopic()">Update</button>
+  <body>
+    <h1 class="title-header">Simple ROS User Interface</h1>
+    <div id="connect-area">
+      <button onclick="inputIP()">Connect</button> 
+      <button onclick="disconnectROS()">Disconnect</button>
     </div>
+    <div id="connect-status">
+      <p>Connection status: <span id="status">Not Connected</span></p>
+    </div>
+      <!-- usb camera stream -->
+    <div id="camera_stream">
+      <h3>Camera Stream</h3>
+      <!-- img src="http://10.150.15.66:8080/stream?topic=/usb_cam/image_raw" width="640" height="480" id="ros_cam"/ --> 
+      <!-- <img id="ros_cam" height="480" width="640" src="./media/video-placeholder.jpg"/> -->
+    </div>
+    <div id="camera_source">
+      <select id="cameraSource">
+        <option value="1">Robot Camera</option>
+        <option value="2">HTTP Stream</option>
+      </select>
+      <button onclick="rosCamera()">Apply Camera Source</button>
+    </div>
+    <!-- joystick section -->
+    <div id="controller_area">
+      <h3 id="controller_header"></h3>
+      <div id="joystick_container">
+        <div id="static"></div>
+        <!-- <div id="semi"></div> -->
+      </div>
+      <!-- <button id="toggleButtonOn" onclick="joystickControl('on')">Turn On Joystick</button> -->
+      <!-- <button id="toggleButtonOff" onclick="joystickControl('off')">Turn Off Joystick</button> -->
+      <button id="calibrateButton" onclick="joystickRecalibrate()">Re-Calibrate Controller</button>
+    </div>
+    <!-- <div id="listTopics">
+      <button onclick="listRosTopics()">Refresh Topics</button>
+    </div> -->
   </body>
-    <!-- script section -->
-    <script type="text/javascript" src="http://static.robotwebtools.org/roslibjs/current/roslib.min.js"></script>
-    <script src="./js/nipplejs.js"></script>
-    <script type="text/javascript" src="http://static.robotwebtools.org/EventEmitter2/current/eventemitter2.min.js"></script>
-    <script src="./js/test.js"></script>
-  </html>
+
+  <!-- script section -->
+  <script type="text/javascript" src="http://static.robotwebtools.org/roslibjs/current/roslib.min.js"></script>
+  <script src="./js/nipplejs.js"></script>
+  <script type="text/javascript" src="http://static.robotwebtools.org/EventEmitter2/current/eventemitter2.min.js"></script>
+  <script src="./js/test.js"></script>
+
+
+</html>

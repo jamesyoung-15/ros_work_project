@@ -17,7 +17,7 @@ function listRosTopics()
     });
     var request = new ROSLIB.ServiceRequest();
     topicTypeClient.callService(request, function(result) {
-        //console.log('Topics: ', result.topics); //topic names
+        console.log('Topics: ', result.topics); //topic names
         console.log('Topic Types: ', result.types); //topic types 
         topics = result.topics;
         topicTypes = result.types;
@@ -53,11 +53,20 @@ function map3d(){
         antialias : true
       });
   
-      // Setup the marker client.
-      var gridClient = new ROS3D.PointCloud2({
+      // Setup a client to listen to TFs.
+      var tfClient = new ROSLIB.TFClient({
         ros : ros,
-        rootObject : viewer.scene,
-        continuous: true,
-        topic: '/registered_scan'
+        angularThres : 0.1,
+        transThres : 0.1,
+        rate : 10.0,
+        fiexedFrame: '/camera_link'
+      });
+  
+      var cloudClient = new ROS3D.PointCloud2({
+          ros: ros,
+          tfClient: tfClient,
+          rootObject: viewer.scene,
+          topic: '/sensor_scan',
+          material: { color: 0xff00ff }
       });
 }

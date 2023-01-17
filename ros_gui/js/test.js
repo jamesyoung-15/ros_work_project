@@ -43,13 +43,15 @@ function inputIP()
     {
     if(ros != null)
     {
-    ros.close();
-    ipaddr=null;
-    document.getElementById("controller_header").innerHTML = "";
-    joystickControl("off");
-    document.getElementById('controller_area').style.visibility = 'hidden';
-    document.getElementById("camera_source").style.visibility = "hidden";
-    document.getElementById("camera_stream").style.visibility = "hidden";
+      ros.close();
+      ipaddr=null;
+      document.getElementById("controller_header").innerHTML = "";
+      joystickControl("off");
+      document.getElementById('controller_area').style.visibility = 'hidden';
+      document.getElementById("camera_source").style.visibility = "hidden";
+      document.getElementById("camera_stream").style.visibility = "hidden";
+      document.getElementById("pointCloud").visibility="hidden";
+      document.getElementById("pointCloudButton").visibility="hidden";
     }
     else
     {
@@ -73,6 +75,8 @@ function createROS()
         document.getElementById("camera_stream").style.visibility = "visible";
         joystickControl("on");
         document.getElementById("controller_area").style.visibility="visible";
+        document.getElementById("pointCloud").style.visibility="visible";
+        document.getElementById("pointCloudButton").style.visibility="visible";
     });
 
     ros.on('error', function(error) {
@@ -174,6 +178,34 @@ function rosCamera()
       }
     }
   }
+}
+
+//point cloud
+function pointCloud(){
+  // Create the main viewer.
+  var viewer = new ROS3D.Viewer({
+      divID : 'pointCloud',
+      width : 800,
+      height : 600,
+      antialias : true
+    });
+
+    // Setup a client to listen to TFs.
+    var tfClient = new ROSLIB.TFClient({
+      ros : ros,
+      angularThres : 0.1,
+      transThres : 0.1,
+      rate : 10.0,
+      fiexedFrame: '/camera_link'
+    });
+
+    var cloudClient = new ROS3D.PointCloud2({
+        ros: ros,
+        tfClient: tfClient,
+        rootObject: viewer.scene,
+        topic: '/sensor_scan',
+        material: { color: 0xff00ff }
+    });
 }
 
 

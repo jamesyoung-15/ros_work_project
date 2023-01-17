@@ -52,3 +52,9 @@
     margin-bottom: 10px;
     margin-top: 100px;
 }
+.pointCloudArea{
+    visibility: hidden;
+    display: grid;
+    justify-content: center;
+    margin-top: 150px;
+}

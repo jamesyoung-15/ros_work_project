@@ -204,7 +204,7 @@ function pointCloud(){
         tfClient: tfClient,
         rootObject: viewer.scene,
         topic: '/sensor_scan',
-        material: { color: 0xff00ff }
+        material: {size:0.2, color: 0xff00ff }
     });
 }
 

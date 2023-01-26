@@ -288,3 +288,13 @@ function joystickControl(toggle)
     }
     // console.log(joystickCreated);
 }
+
+var year, month, day, minutes, seconds;
+
+function getDate()
+{
+  year = new Date().getFullYear();
+  month = new Date().getMonth()+1;
+  day = new Date().getDate();
+  minutes = new Date().getMinutes();
+}

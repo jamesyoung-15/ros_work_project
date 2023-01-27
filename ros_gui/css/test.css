@@ -1,3 +1,6 @@
+body{
+    
+}
 .title-header{
     text-align: center;
 }
@@ -57,4 +60,19 @@
     display: grid;
     justify-content: center;
     margin-top: 150px;
+}
+.sensorData{
+    text-align: center;
+    margin: 5px auto;
+}
+.sensorData table{
+    margin: 5px auto;
+}
+.sensorData table, th, td{
+    border: 1px solid black;
+    border-collapse: collapse;
+}
+.sensorData th,td{
+    padding: 5px;
+    text-align: center;
 }

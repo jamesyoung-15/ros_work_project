@@ -9,7 +9,7 @@ from datetime import datetime, date, time, timezone
 
 
 # Extract current time information 
-time_now = datetime.now()
+time_now = datetime.now(timezone.utc)
 # Assign current date in yyyy-mm-dd format
 cur_dt = time_now.strftime("%F")
 # Assign current hour in hh format
@@ -28,6 +28,5 @@ requests.get (url)
 content = json.loads(requests.get(url).content)
 #display the scrapped dictionary of sensor data
 print(content)
-print(url)
      
      

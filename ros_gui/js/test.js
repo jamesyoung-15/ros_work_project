@@ -291,10 +291,79 @@ function joystickControl(toggle)
 
 var year, month, day, minutes, seconds;
 
-function getDate()
+function getUrl()
 {
-  year = new Date().getFullYear();
-  month = new Date().getMonth()+1;
-  day = new Date().getDate();
-  minutes = new Date().getMinutes();
+  //get current time in UTC
+  let year = new Date().getUTCFullYear();
+  let month = new Date().getUTCMonth()+1;
+  let day = new Date().getUTCDate()-1;
+  let minutes = new Date().getUTCMinutes();
+  let prevMin = new Date().getUTCMinutes()-1;
+  let hour = new Date().getUTCHours();
+  let seconds = new Date().getUTCSeconds();
+  let milliseconds = new Date().getUTCMilliseconds();
+  console.log(year, month, day, minutes);
+  //make sure single digit month, hour, min show up as like 01 instead of 1
+  let str1 = '0';
+  if(prevMin<0){
+    prevMin = 0;
+  }
+  if(month<10){
+    // month = month.toString();
+    month = str1.concat(month);
+  }
+  if(minutes<10){
+    minutes = str1.concat(minutes);
+  }
+  if(prevMin<10){
+    prevMin = str1.concat(prevMin);
+  }
+  if(hour<10){
+    hour=str1.concat(hour);
+  }
+  if(seconds<10)
+  {
+    seconds=str1.concat(seconds);
+  }
+  return url = `https://1v2kgpsm3a.execute-api.ap-northeast-2.amazonaws.com/innoair/I01A002F001B?interval=0&from_time=${year}-${month}-${day}T${hour}%3A${prevMin}%3A${seconds}.${milliseconds}Z&to_time=${year}-${month}-${day}T${hour}%3A${minutes}%3A${seconds}.${milliseconds}Z`;
 }
+var sensorData;
+function fetchData()
+{
+  let url = getUrl();
+  fetch(url)
+    .then((response) => response.json())
+    .then(function(data){
+      console.log(data);
+      console.log(new Date().toUTCString())
+      let showTime = document.getElementById("showTime");
+      // let tempContainer = document.getElementById("tempData");
+      // let humiContainer = document.getElementById("humiData");
+      // let co2Container = document.getElementById("co2Data");
+      // let pm10Container = document.getElementById("pm10Data");
+      // let pm25Container = document.getElementById("pm25Data");
+      // let tvocContainer = document.getElementById("tvocData");
+      time = new Date().toUTCString();
+      showTime.innerHTML= time;
+      // tempContainer.innerHTML='Temperature: '+ data['data'].TEMP[0] + '\u00B0C';
+      // humiContainer.innerHTML='Humidity:\t'+ data['data'].HUMI[0]+'%';
+      // co2Container.innerHTML='CO2:\t'+ data['data'].CO2+' ppm';
+      // pm25Container.innerHTML='PM2.5:\t'+data['data'].PM25 + ' µg/m³';
+      // pm10Container.innerHTML='PM10:\t'+data['data'].PM10 + ' µg/m³';
+      // tvocContainer.innerHTML='TVOC:\t'+data['data'].TVOC;
+      sensorData = data;
+      let placeholder = document.getElementById('data-output');
+      let out="";
+      out+=`<tr>
+              <td>${data['data'].TEMP[0]}\u00B0C</td>
+              <td>${data['data'].HUMI[0]}%</td>
+              <td>${data['data'].CO2[0]} ppm</td>
+              <td>${data['data'].PM10[0]} µg/m³</td>
+              <td>${data['data'].PM25[0]} µg/m³</td>
+              <td>${data['data'].TVOC[0]} µg/m³</td>
+      `;
+      placeholder.innerHTML=out;
+    });
+}
+fetchData();
+interval = setInterval(fetchData, 60000);

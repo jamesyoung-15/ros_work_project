@@ -50,8 +50,8 @@ function inputIP()
       document.getElementById('controller_area').style.visibility = 'hidden';
       document.getElementById("camera_source").style.visibility = "hidden";
       document.getElementById("camera_stream").style.visibility = "hidden";
-      document.getElementById("pointCloud").visibility="hidden";
-      document.getElementById("pointCloudButton").visibility="hidden";
+      document.getElementById("pointCloud").style.visibility="hidden";
+      document.getElementById("pointCloudButton").style.visibility="hidden";
     }
     else
     {
@@ -124,7 +124,6 @@ function rosCamera()
 {
   getSource = document.querySelector('#cameraSource')
   source = getSource.value;
-//   console.log(source);
   var streamImg = document.createElement('img');
   if(ros!=null)
   {
@@ -132,8 +131,8 @@ function rosCamera()
     {
       var imageListener = new ROSLIB.Topic({
         ros : ros,
-        name : '/camera/image/compressed',
-        //   name : '/usb_cam/image_raw/compressed', //for usb camera
+        // name : '/camera/image/compressed',
+          name : '/usb_cam/image_raw/compressed', //for usb camera
         messageType : 'sensor_msgs/CompressedImage'
       });
       imageListener.subscribe(function(message) {
@@ -288,9 +287,9 @@ function joystickControl(toggle)
     }
     // console.log(joystickCreated);
 }
-
+// IAQ Sensor Fetch and Display
 var year, month, day, minutes, seconds;
-
+//returns api url based on GMT time
 function getUrl()
 {
   //get current time in UTC
@@ -327,32 +326,23 @@ function getUrl()
   }
   return url = `https://1v2kgpsm3a.execute-api.ap-northeast-2.amazonaws.com/innoair/I01A002F001B?interval=0&from_time=${year}-${month}-${day}T${hour}%3A${prevMin}%3A${seconds}.${milliseconds}Z&to_time=${year}-${month}-${day}T${hour}%3A${minutes}%3A${seconds}.${milliseconds}Z`;
 }
-var sensorData;
+//get IAQ data from API
 function fetchData()
 {
+  //get url from function
   let url = getUrl();
+  //fetch api
   fetch(url)
     .then((response) => response.json())
     .then(function(data){
       console.log(data);
       console.log(new Date().toUTCString())
       let showTime = document.getElementById("showTime");
-      // let tempContainer = document.getElementById("tempData");
-      // let humiContainer = document.getElementById("humiData");
-      // let co2Container = document.getElementById("co2Data");
-      // let pm10Container = document.getElementById("pm10Data");
-      // let pm25Container = document.getElementById("pm25Data");
-      // let tvocContainer = document.getElementById("tvocData");
       time = new Date().toUTCString();
       showTime.innerHTML= time;
-      // tempContainer.innerHTML='Temperature: '+ data['data'].TEMP[0] + '\u00B0C';
-      // humiContainer.innerHTML='Humidity:\t'+ data['data'].HUMI[0]+'%';
-      // co2Container.innerHTML='CO2:\t'+ data['data'].CO2+' ppm';
-      // pm25Container.innerHTML='PM2.5:\t'+data['data'].PM25 + ' µg/m³';
-      // pm10Container.innerHTML='PM10:\t'+data['data'].PM10 + ' µg/m³';
-      // tvocContainer.innerHTML='TVOC:\t'+data['data'].TVOC;
-      sensorData = data;
+      //sensorData = data;
       let placeholder = document.getElementById('data-output');
+      //output data to table format
       let out="";
       out+=`<tr>
               <td>${data['data'].TEMP[0]}\u00B0C</td>
@@ -365,5 +355,6 @@ function fetchData()
       placeholder.innerHTML=out;
     });
 }
+//run fetchData every minute
 fetchData();
 interval = setInterval(fetchData, 60000);

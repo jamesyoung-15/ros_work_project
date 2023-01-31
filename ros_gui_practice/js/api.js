@@ -1,6 +1,31 @@
 // IAQ Sensor Fetch and Display
 var year, month, day, minutes, seconds;
+var temperature, humidity, co2, pm10, pm25;
 //returns api url based on GMT time
+
+//bars
+var tempBar = new ProgressBar.Circle('#temp-container', {
+  strokeWidth: 6,
+  color: '#FFEA82',
+  trailColor: '#eee',
+  trailWidth: 1,
+  easing: 'easeInOut',
+  duration: 500,
+  svgStyle: null,
+  text: {
+    value: '',
+    alignToBottom: false
+  },
+  from: {color: '#3aff18'},
+  to: {color: '#fa1201'},
+  // Set default step function for all animate calls
+  step: (state, bar) => {
+    
+    bar.text.style.color = '#3aff18';
+    bar.path.setAttribute('stroke', '#3aff18');
+  }
+});
+
 function getUrl()
 {
   //get current time in UTC
@@ -56,9 +81,9 @@ function fetchData()
       let placeholder = document.getElementById('data-output');
       //output data to table format
       let out="";
-      let temp = (Math.round(data['data'].TEMP[0] * 100) / 100).toFixed(1);
+      temperature = (Math.round(data['data'].TEMP[0] * 100) / 100).toFixed(1);
       out+=`<tr>
-              <td>${temp}\u00B0C</td>
+              <td>${temperature}\u00B0C</td>
               <td>${data['data'].HUMI[0]}%</td>
               <td>${data['data'].CO2[0]} ppm</td>
               <td>${data['data'].PM10[0]} µg/m³</td>
@@ -66,6 +91,7 @@ function fetchData()
               <td>${data['data'].TVOC[0]} µg/m³</td>
       `;
       placeholder.innerHTML=out;
+      tempBar.animate(1.0);
     });
 }
 function updateTime()
@@ -81,3 +107,4 @@ window.onload = function()
     setInterval(fetchData, 60000);
     setInterval(updateTime,1000);
 };
+
